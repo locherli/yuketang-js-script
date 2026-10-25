@@ -69,7 +69,7 @@
             }
             .ytk-minimized .ytk-window-content { display: none; }
             .ytk-minimized .ytk-window-header { border-radius: 5px; }
-            .ytk-windows-content label:above { background-color: grey }
+            .ytk-window-content label:hover { background-color: grey }
         `;
         document.head.appendChild(style);
 
@@ -355,7 +355,7 @@
             }
             const spans = log.querySelectorAll('span');
             console.log('点击展开')
-            if (spans[1].innerText.includes('展开'))
+            if (spans.length >= 2 && spans[1].innerText.includes('展开'))
                 spans[1].click();
         }
 
@@ -398,7 +398,11 @@
     }
 
     // 绕过切屏检测
+    let hasPreventScreenCheck = false;
     function preventScreenCheck() {
+        if (hasPreventScreenCheck) return;
+        hasPreventScreenCheck = true;
+
         const win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
         const blackList = new Set(['visibilitychange', 'blur', 'pagehide']);
 
@@ -491,6 +495,7 @@
                 console.log('已阅读外部链接');
                 await Utils.sleep(2000);
                 history.back();
+                await Utils.sleep(2000);
                 location.reload();
                 continue;
             }
